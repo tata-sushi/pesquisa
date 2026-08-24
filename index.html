@@ -68,7 +68,9 @@ body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--wh
 .intro{ background:var(--white); border:1px solid var(--border); border-radius:var(--r); padding:22px 20px; margin-bottom:14px; color:var(--t1); }
 .intro h1{ font-size:19px; font-weight:700; line-height:1.3; margin-bottom:8px; color:var(--t1); }
 .intro p{ font-size:13.5px; color:var(--t2); line-height:1.6; }
-.intro-help{ font-size:13px; color:var(--t2); line-height:1.6; margin-top:10px; }
+.intro-sep{ margin-top:16px; padding-top:16px; border-top:1px solid var(--border); }
+.intro-sub{ font-size:14px; font-weight:700; color:var(--t1); margin-bottom:6px; }
+.intro-help{ font-size:13px; color:var(--t2); line-height:1.6; }
 .intro-help b{ color:var(--carbon); font-weight:600; }
 .anon{ display:flex; gap:10px; align-items:flex-start; margin-top:16px; padding:12px 14px; background:rgba(207,255,0,.10); border-left:3px solid var(--citric); border-radius:0 var(--r-sm) var(--r-sm) 0; }
 .anon svg{ width:16px; height:16px; stroke:var(--carbon); fill:none; stroke-width:2; flex-shrink:0; margin-top:1px; }
@@ -143,7 +145,10 @@ body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--wh
     <div class="intro">
       <h1>Como estão as coisas no TATÁ?</h1>
       <p>Queremos ouvir sua opinião sobre alguns temas, que podemos melhorar no dia a dia do TATÁ. Bora lá?</p>
-      <p class="intro-help">Em cada pergunta, toque numa nota de <b>1</b> (muito baixo) a <b>5</b> (excelente) — quanto maior, melhor. Leva menos de 1 minuto.</p>
+      <div class="intro-sep">
+        <h2 class="intro-sub">Como responder?</h2>
+        <p class="intro-help">Responda as perguntas escolhendo de <b>1</b> a <b>5</b>, onde <b>1</b> representa uma baixa compatibilidade (<b>Raramente</b>) e <b>5</b> uma alta compatibilidade (<b>Sempre</b>).</p>
+      </div>
       <div class="anon">
         <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
         <span><strong>Anônimo:</strong> O que você responder aqui é sigiloso e ninguém vê. No final, será gerado um resultado único. Sem nome ou identificação.</span>
@@ -177,7 +182,7 @@ body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--wh
     check: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>',
     heart: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>'
   };
-  var SCALE_LABELS = { 1:'Muito baixo', 3:'Moderado', 5:'Excelente' };
+  var SCALE_LABELS = { 1:'Raramente', 3:'Às vezes', 5:'Sempre' };
 
   var $ = function(id){ return document.getElementById(id); };
   function show(view){ ['loading','msg','form'].forEach(function(v){ $('view-'+v).classList.toggle('hide', v!==view); }); }
@@ -186,7 +191,7 @@ body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--wh
 
   var MOTIVOS = {
     expirada:      ['clock','Este link expirou','O convite vale por 24 horas. Se ainda quiser participar, avise o RH que a gente reenvia.'],
-    ja_respondida: ['check','Você já respondeu','Obrigado por participar! Sua resposta foi registrada. 💚'],
+    ja_respondida: ['sad','Link expirado',''],
     invalido:      ['sad','Link expirado',''],
     sem_token:     ['sad','Link incompleto','Abra a pesquisa pelo link que você recebeu no WhatsApp.']
   };
