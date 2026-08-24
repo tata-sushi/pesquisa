@@ -182,12 +182,12 @@ body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--wh
   var $ = function(id){ return document.getElementById(id); };
   function show(view){ ['loading','msg','form'].forEach(function(v){ $('view-'+v).classList.toggle('hide', v!==view); }); }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
-  function msg(icon,title,text){ $('msg-icon').innerHTML=ICONS[icon]||ICONS.sad; $('msg-title').textContent=title; $('msg-text').textContent=text; show('msg'); }
+  function msg(icon,title,text){ $('msg-icon').innerHTML=ICONS[icon]||ICONS.sad; $('msg-title').textContent=title; $('msg-text').textContent=text||''; $('msg-text').style.display=text?'':'none'; show('msg'); }
 
   var MOTIVOS = {
     expirada:      ['clock','Este link expirou','O convite vale por 24 horas. Se ainda quiser participar, avise o RH que a gente reenvia.'],
     ja_respondida: ['check','Você já respondeu','Obrigado por participar! Sua resposta foi registrada. 💚'],
-    invalido:      ['sad','Link inválido','Confira se copiou o endereço completo da mensagem. Na dúvida, fale com o RH.'],
+    invalido:      ['sad','Link expirado',''],
     sem_token:     ['sad','Link incompleto','Abra a pesquisa pelo link que você recebeu no WhatsApp.']
   };
   function motivoMsg(m){ var d=MOTIVOS[m]||MOTIVOS.invalido; msg(d[0],d[1],d[2]); }
