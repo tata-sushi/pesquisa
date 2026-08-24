@@ -8,6 +8,9 @@
     av_clima_abrir(token)     → traz 3–5 perguntas + 1 aberta
     av_clima_responder(...)   → grava anônimo, uso único
   Anônimo: nenhuma matrícula/identidade é enviada ou guardada aqui.
+
+  Layout com base na Ouvidoria: página escura (carbon), hero com título
+  citric, cards brancos, info-box citric, botão pílula e rodapé de marca.
   ─────────────────────────────────────────────────────────────
 -->
 <html lang="pt-BR">
@@ -16,52 +19,56 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Pesquisa de Clima — TATÁ Sushi</title>
 <meta name="robots" content="noindex">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 :root{
-  --carbon:#35383F; --citric:#CFFF00;
+  --carbon:#35383F; --carbon-2:#3E424B; --citric:#CFFF00;
   --bg:#F4F4F4; --white:#FFFFFF; --border:#E2E2E2;
   --t1:#111111; --t2:#555555; --t3:#999999;
-  --ok:#2f7a43; --okbg:#EAF4ED; --bad:#c0392b; --r:12px;
+  --ok:#1A5C2A; --okbg:#EAF4ED; --bad:#c0392b;
+  --r:12px; --r-sm:6px;
 }
 html{ -webkit-font-smoothing:antialiased; }
-body{ font-family:"DM Sans",sans-serif; background:var(--bg); color:var(--t1); min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; }
+body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--white); min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; overflow-x:hidden; }
 
-.header{ position:sticky; top:0; z-index:50; background:var(--white); border-bottom:1px solid var(--border); padding:0 16px; height:52px; display:flex; align-items:center; gap:10px; }
-.header-badge{ width:28px; height:28px; background:var(--carbon); border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.header-badge span{ color:var(--citric); font-family:"DM Mono",monospace; font-size:11px; font-weight:600; }
-.header-title{ font-size:14px; font-weight:600; line-height:1.1; }
-.header-sub{ font-family:"DM Mono",monospace; font-size:10px; color:var(--t3); text-transform:uppercase; letter-spacing:.08em; }
+/* ── Hero (base: Ouvidoria) ─────────────────────────── */
+.rh-hero{ padding:34px 24px 24px; overflow:hidden; }
+.rh-hero-inner{ max-width:560px; margin:0 auto; text-align:center; }
+.rh-logo{ width:46px; height:46px; display:block; margin:0 auto 18px; }
+.rh-eyebrow{ font-family:"DM Mono",monospace; font-size:10px; font-weight:500; letter-spacing:.3em; text-transform:uppercase; color:rgba(255,255,255,.42); margin-bottom:14px; }
+.rh-title{ font-family:"DM Sans",sans-serif; font-size:46px; font-weight:700; line-height:.92; letter-spacing:-1.4px; color:var(--citric); }
 
-.main{ flex:1; width:100%; max-width:560px; margin:0 auto; padding:18px 16px 40px; }
+.main{ flex:1; width:100%; max-width:560px; margin:0 auto; padding:4px 16px 40px; }
 
-/* estados centrais (loading/erro/sucesso) */
-.state{ min-height:60vh; display:flex; align-items:center; justify-content:center; }
-.state-card{ width:100%; background:var(--white); border:1px solid var(--border); border-radius:var(--r); padding:36px 26px; text-align:center; }
+/* ── estados centrais (loading / erro / sucesso) ────── */
+.state{ min-height:52vh; display:flex; align-items:center; justify-content:center; }
+.state-card{ width:100%; background:var(--white); border:1px solid var(--border); border-radius:var(--r); padding:36px 26px; text-align:center; color:var(--t1); }
 .state-mark{ width:56px; height:56px; margin:0 auto 20px; border-radius:14px; display:flex; align-items:center; justify-content:center; background:var(--carbon); }
 .state-mark svg{ width:26px; height:26px; stroke:var(--citric); fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
-.state-card h1{ font-size:20px; font-weight:700; margin-bottom:10px; line-height:1.3; }
+.state-card h1{ font-size:20px; font-weight:700; margin-bottom:10px; line-height:1.3; color:var(--t1); }
 .state-card p{ font-size:14px; color:var(--t2); line-height:1.6; }
 .spinner{ width:34px; height:34px; border-radius:50%; border:3px solid var(--border); border-top-color:var(--carbon); animation:spin .8s linear infinite; margin:0 auto; }
 @keyframes spin{ to{ transform:rotate(360deg); } }
 
-/* intro / anonimato */
-.intro{ background:var(--white); border:1px solid var(--border); border-radius:var(--r); padding:20px; margin-bottom:14px; }
-.intro h1{ font-size:19px; font-weight:700; line-height:1.3; margin-bottom:8px; }
+/* ── intro / anonimato ──────────────────────────────── */
+.intro{ background:var(--white); border:1px solid var(--border); border-radius:var(--r); padding:22px 20px; margin-bottom:14px; color:var(--t1); }
+.intro h1{ font-size:19px; font-weight:700; line-height:1.3; margin-bottom:8px; color:var(--t1); }
 .intro p{ font-size:13.5px; color:var(--t2); line-height:1.6; }
-.anon{ display:flex; gap:9px; align-items:flex-start; margin-top:14px; padding:11px 12px; background:var(--okbg); border-radius:9px; }
-.anon svg{ width:16px; height:16px; stroke:var(--ok); fill:none; stroke-width:2; flex-shrink:0; margin-top:1px; }
-.anon span{ font-size:12px; color:var(--ok); line-height:1.5; font-weight:500; }
+.anon{ display:flex; gap:10px; align-items:flex-start; margin-top:16px; padding:12px 14px; background:rgba(207,255,0,.10); border-left:3px solid var(--citric); border-radius:0 var(--r-sm) var(--r-sm) 0; }
+.anon svg{ width:16px; height:16px; stroke:var(--carbon); fill:none; stroke-width:2; flex-shrink:0; margin-top:1px; }
+.anon span{ font-size:12.5px; color:var(--t2); line-height:1.55; }
+.anon strong{ color:var(--t1); font-weight:600; }
 
-/* pergunta */
-.q{ background:var(--white); border:1px solid var(--border); border-radius:var(--r); padding:18px 16px; margin-bottom:12px; }
+/* ── pergunta ───────────────────────────────────────── */
+.q{ background:var(--white); border:1px solid var(--border); border-radius:var(--r); padding:18px 16px; margin-bottom:12px; color:var(--t1); }
 .q-top{ display:flex; align-items:center; gap:8px; margin-bottom:12px; }
 .q-num{ font-family:"DM Mono",monospace; font-size:10px; font-weight:500; color:var(--t3); letter-spacing:.06em; }
 .q-dim{ font-family:"DM Mono",monospace; font-size:9px; font-weight:500; text-transform:uppercase; letter-spacing:.08em; color:var(--carbon); background:var(--bg); border:1px solid var(--border); border-radius:999px; padding:3px 8px; }
-.q-text{ font-size:15px; font-weight:600; line-height:1.4; margin-bottom:16px; }
+.q-text{ font-size:15px; font-weight:600; line-height:1.4; margin-bottom:16px; color:var(--t1); }
 .scale{ display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
 .scale button{ aspect-ratio:1/1; border:1.5px solid var(--border); background:var(--white); border-radius:10px; font-family:"DM Mono",monospace; font-size:18px; font-weight:500; color:var(--t2); cursor:pointer; transition:transform .08s, background .12s, border-color .12s, color .12s; }
 .scale button:active{ transform:scale(.94); }
@@ -69,32 +76,59 @@ body{ font-family:"DM Sans",sans-serif; background:var(--bg); color:var(--t1); m
 .scale-lbl{ display:flex; justify-content:space-between; margin-top:9px; }
 .scale-lbl span{ font-family:"DM Mono",monospace; font-size:9.5px; color:var(--t3); }
 
-/* aberta */
-.q textarea{ width:100%; min-height:88px; border:1.5px solid var(--border); border-radius:10px; padding:12px; font-family:"DM Sans",sans-serif; font-size:14px; color:var(--t1); resize:vertical; }
-.q textarea:focus{ outline:none; border-color:var(--carbon); }
+/* ── aberta ─────────────────────────────────────────── */
+.q textarea{ width:100%; min-height:88px; border:1.5px solid var(--border); border-radius:10px; padding:12px; font-family:"DM Sans",sans-serif; font-size:14px; color:var(--t1); resize:vertical; transition:border-color .2s, box-shadow .2s; }
+.q textarea:focus{ outline:none; border-color:var(--carbon); box-shadow:0 0 0 3px rgba(53,56,63,.1); }
 .q-opt{ font-family:"DM Mono",monospace; font-size:9.5px; color:var(--t3); text-transform:uppercase; letter-spacing:.06em; margin-left:auto; }
 
-/* barra de envio fixa */
-.submitbar{ position:sticky; bottom:0; background:linear-gradient(to top, var(--bg) 70%, transparent); padding:12px 0 max(12px, env(safe-area-inset-bottom)); }
-.btn{ width:100%; border:none; border-radius:12px; padding:15px; background:var(--carbon); color:var(--citric); font-family:"DM Mono",monospace; font-size:13px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
-.btn:disabled{ opacity:.45; cursor:not-allowed; }
-.btn svg{ width:16px; height:16px; stroke:var(--citric); fill:none; stroke-width:2.4; }
-.prog{ text-align:center; font-family:"DM Mono",monospace; font-size:10.5px; color:var(--t3); margin-bottom:9px; }
+/* ── barra de envio fixa ────────────────────────────── */
+.submitbar{ position:sticky; bottom:0; background:linear-gradient(to top, var(--carbon) 62%, transparent); padding:14px 0 max(14px, env(safe-area-inset-bottom)); }
+.prog{ text-align:center; font-family:"DM Mono",monospace; font-size:10.5px; letter-spacing:.04em; color:rgba(255,255,255,.5); margin-bottom:10px; }
+.btn{ width:100%; border:none; border-radius:100px; padding:16px; background:var(--citric); color:var(--carbon); font-family:"DM Mono",monospace; font-size:13px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:opacity .2s, transform .15s; }
+.btn:hover{ opacity:.9; }
+.btn:active{ transform:scale(.99); }
+.btn:disabled{ opacity:.4; cursor:not-allowed; }
+.btn svg{ width:16px; height:16px; stroke:var(--carbon); fill:none; stroke-width:2.6; }
 
-.footer{ text-align:center; padding:8px 20px 22px; }
-.footer span{ font-family:"DM Mono",monospace; font-size:10px; color:var(--t3); text-transform:uppercase; letter-spacing:.08em; }
+/* ── rodapé de marca (base: Ouvidoria) ──────────────── */
+.footer{ margin-top:8px; padding:14px 16px 30px; text-align:center; }
+.footer span{ font-family:"DM Mono",monospace; font-size:9px; font-weight:500; letter-spacing:1px; text-transform:uppercase; color:rgba(255,255,255,.35); }
 .hide{ display:none !important; }
+
+@media (min-width:768px){
+  .rh-hero{ padding:56px 24px 40px; }
+  .rh-eyebrow{ font-size:11px; margin-bottom:18px; }
+  .rh-title{ font-size:72px; letter-spacing:-2px; }
+  .main{ max-width:600px; }
+}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-badge"><span>TS</span></div>
-  <div>
-    <div class="header-title">Pesquisa de Clima</div>
-    <div class="header-sub">TATÁ Sushi</div>
+<section class="rh-hero">
+  <div class="rh-hero-inner">
+    <svg class="rh-logo" viewBox="0 0 100 100" aria-hidden="true">
+      <g fill="none" stroke="#CFFF00" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round">
+        <polygon points="50,4 92,27 92,73 50,96 8,73 8,27"/>
+        <polygon points="50,32 68,42 68,62 50,72 32,62 32,42"/>
+        <polygon points="50,10 58,15 58,23 50,28 42,23 42,15"/>
+        <line x1="8" y1="27" x2="32" y2="42"/>
+        <line x1="8" y1="73" x2="32" y2="62"/>
+        <line x1="92" y1="27" x2="68" y2="42"/>
+        <line x1="92" y1="73" x2="68" y2="62"/>
+        <line x1="32" y1="62" x2="50" y2="72"/>
+        <line x1="68" y1="62" x2="50" y2="72"/>
+        <line x1="32" y1="62" x2="50" y2="96"/>
+        <line x1="68" y1="62" x2="50" y2="96"/>
+        <line x1="50" y1="28" x2="50" y2="32"/>
+        <line x1="42" y1="15" x2="32" y2="42"/>
+        <line x1="58" y1="15" x2="68" y2="42"/>
+      </g>
+    </svg>
+    <div class="rh-eyebrow">TATÁ Sushi</div>
+    <h1 class="rh-title">Pesquisa de Clima</h1>
   </div>
-</div>
+</section>
 
 <div class="main">
 
@@ -119,7 +153,7 @@ body{ font-family:"DM Sans",sans-serif; background:var(--bg); color:var(--t1); m
       <p>São só algumas perguntas rápidas. Sua opinião ajuda a melhorar o dia a dia no Tatá. Leva menos de 1 minuto.</p>
       <div class="anon">
         <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-        <span>Anônimo. Ninguém vê quem respondeu — o RH enxerga só os resultados do grupo.</span>
+        <span><strong>Anônimo.</strong> Ninguém vê quem respondeu — o RH enxerga só os resultados do grupo.</span>
       </div>
     </div>
 
@@ -136,7 +170,7 @@ body{ font-family:"DM Sans",sans-serif; background:var(--bg); color:var(--t1); m
 
 </div>
 
-<div class="footer"><span>TATÁ Sushi</span></div>
+<div class="footer"><span>TATÁ Sushi &nbsp;|&nbsp; TATÁ Poke &nbsp;|&nbsp; 2016 – 2026</span></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
