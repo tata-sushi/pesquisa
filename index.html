@@ -1,57 +1,89 @@
 <!DOCTYPE html>
 <!--
   ─────────────────────────────────────────────────────────────
-  MANUTENÇÃO:
-  Esta é a página de espera (holding page) da pesquisa.
-  Quando o HTML da pesquisa estiver pronto, SUBSTITUA este arquivo
-  (index.html) pelo HTML da pesquisa. O disparo aponta para a raiz:
-  https://pesquisa.tatasushi.tech/
-  Basta commit + push na branch main que o GitHub Pages publica.
+  Pesquisa de Clima — TATÁ Sushi
+  Página pública, SEM login. A pessoa chega por link único do WhatsApp:
+    https://pesquisa.tatasushi.tech/?t=<token>
+  Fluxo (RPCs tata_plus no Supabase, papel anon):
+    av_clima_abrir(token)     → traz 3–5 perguntas + 1 aberta
+    av_clima_responder(...)   → grava anônimo, uso único
+  Anônimo: nenhuma matrícula/identidade é enviada ou guardada aqui.
   ─────────────────────────────────────────────────────────────
 -->
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pesquisa — TATÁ Sushi</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Pesquisa de Clima — TATÁ Sushi</title>
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-:root {
+:root{
   --carbon:#35383F; --citric:#CFFF00;
   --bg:#F4F4F4; --white:#FFFFFF; --border:#E2E2E2;
   --t1:#111111; --t2:#555555; --t3:#999999;
-  --r:6px;
+  --ok:#2f7a43; --okbg:#EAF4ED; --bad:#c0392b; --r:12px;
 }
-html { -webkit-font-smoothing:antialiased; }
-body { font-family:"DM Sans",sans-serif; background:var(--bg); color:var(--t1); min-height:100vh; display:flex; flex-direction:column; }
+html{ -webkit-font-smoothing:antialiased; }
+body{ font-family:"DM Sans",sans-serif; background:var(--bg); color:var(--t1); min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; }
 
-.header { position:sticky; top:0; z-index:200; background:var(--white); border-bottom:1px solid var(--border); padding:0 16px; height:52px; display:flex; align-items:center; gap:10px; }
-.header-badge { width:28px; height:28px; background:var(--carbon); border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.header-badge span { color:var(--citric); font-family:"DM Mono",monospace; font-size:11px; font-weight:600; }
-.header-title { font-size:14px; font-weight:600; }
-.header-sub { font-family:"DM Mono",monospace; font-size:10px; color:var(--t3); text-transform:uppercase; letter-spacing:.08em; }
+.header{ position:sticky; top:0; z-index:50; background:var(--white); border-bottom:1px solid var(--border); padding:0 16px; height:52px; display:flex; align-items:center; gap:10px; }
+.header-badge{ width:28px; height:28px; background:var(--carbon); border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.header-badge span{ color:var(--citric); font-family:"DM Mono",monospace; font-size:11px; font-weight:600; }
+.header-title{ font-size:14px; font-weight:600; line-height:1.1; }
+.header-sub{ font-family:"DM Mono",monospace; font-size:10px; color:var(--t3); text-transform:uppercase; letter-spacing:.08em; }
 
-.main { flex:1; display:flex; align-items:center; justify-content:center; padding:24px 20px 64px; }
-.card { max-width:440px; width:100%; background:var(--white); border:1px solid var(--border); border-radius:var(--r); padding:40px 32px; text-align:center; }
+.main{ flex:1; width:100%; max-width:560px; margin:0 auto; padding:18px 16px 40px; }
 
-.mark { width:56px; height:56px; margin:0 auto 22px; background:var(--carbon); border-radius:12px; display:flex; align-items:center; justify-content:center; }
-.mark span { color:var(--citric); font-family:"DM Mono",monospace; font-size:20px; font-weight:600; }
+/* estados centrais (loading/erro/sucesso) */
+.state{ min-height:60vh; display:flex; align-items:center; justify-content:center; }
+.state-card{ width:100%; background:var(--white); border:1px solid var(--border); border-radius:var(--r); padding:36px 26px; text-align:center; }
+.state-mark{ width:56px; height:56px; margin:0 auto 20px; border-radius:14px; display:flex; align-items:center; justify-content:center; background:var(--carbon); }
+.state-mark svg{ width:26px; height:26px; stroke:var(--citric); fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+.state-card h1{ font-size:20px; font-weight:700; margin-bottom:10px; line-height:1.3; }
+.state-card p{ font-size:14px; color:var(--t2); line-height:1.6; }
+.spinner{ width:34px; height:34px; border-radius:50%; border:3px solid var(--border); border-top-color:var(--carbon); animation:spin .8s linear infinite; margin:0 auto; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
 
-.tag { display:inline-block; font-family:"DM Mono",monospace; font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--t3); border:1px solid var(--border); border-radius:999px; padding:4px 10px; margin-bottom:16px; }
-.card h1 { font-size:22px; font-weight:700; margin-bottom:10px; line-height:1.25; }
-.card p { font-size:14px; color:var(--t2); line-height:1.6; }
+/* intro / anonimato */
+.intro{ background:var(--white); border:1px solid var(--border); border-radius:var(--r); padding:20px; margin-bottom:14px; }
+.intro h1{ font-size:19px; font-weight:700; line-height:1.3; margin-bottom:8px; }
+.intro p{ font-size:13.5px; color:var(--t2); line-height:1.6; }
+.anon{ display:flex; gap:9px; align-items:flex-start; margin-top:14px; padding:11px 12px; background:var(--okbg); border-radius:9px; }
+.anon svg{ width:16px; height:16px; stroke:var(--ok); fill:none; stroke-width:2; flex-shrink:0; margin-top:1px; }
+.anon span{ font-size:12px; color:var(--ok); line-height:1.5; font-weight:500; }
 
-.dots { display:flex; gap:6px; justify-content:center; margin-top:24px; }
-.dots i { width:7px; height:7px; border-radius:50%; background:var(--border); animation:pulse 1.2s ease-in-out infinite; }
-.dots i:nth-child(2){ animation-delay:.2s; } .dots i:nth-child(3){ animation-delay:.4s; }
-@keyframes pulse { 0%,100%{ background:var(--border); } 50%{ background:var(--carbon); } }
+/* pergunta */
+.q{ background:var(--white); border:1px solid var(--border); border-radius:var(--r); padding:18px 16px; margin-bottom:12px; }
+.q-top{ display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+.q-num{ font-family:"DM Mono",monospace; font-size:10px; font-weight:500; color:var(--t3); letter-spacing:.06em; }
+.q-dim{ font-family:"DM Mono",monospace; font-size:9px; font-weight:500; text-transform:uppercase; letter-spacing:.08em; color:var(--carbon); background:var(--bg); border:1px solid var(--border); border-radius:999px; padding:3px 8px; }
+.q-text{ font-size:15px; font-weight:600; line-height:1.4; margin-bottom:16px; }
+.scale{ display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+.scale button{ aspect-ratio:1/1; border:1.5px solid var(--border); background:var(--white); border-radius:10px; font-family:"DM Mono",monospace; font-size:18px; font-weight:500; color:var(--t2); cursor:pointer; transition:transform .08s, background .12s, border-color .12s, color .12s; }
+.scale button:active{ transform:scale(.94); }
+.scale button.sel{ background:var(--carbon); color:var(--citric); border-color:var(--carbon); }
+.scale-lbl{ display:flex; justify-content:space-between; margin-top:9px; }
+.scale-lbl span{ font-family:"DM Mono",monospace; font-size:9.5px; color:var(--t3); }
 
-.footer { text-align:center; padding:0 20px 28px; }
-.footer span { font-family:"DM Mono",monospace; font-size:10px; color:var(--t3); text-transform:uppercase; letter-spacing:.08em; }
+/* aberta */
+.q textarea{ width:100%; min-height:88px; border:1.5px solid var(--border); border-radius:10px; padding:12px; font-family:"DM Sans",sans-serif; font-size:14px; color:var(--t1); resize:vertical; }
+.q textarea:focus{ outline:none; border-color:var(--carbon); }
+.q-opt{ font-family:"DM Mono",monospace; font-size:9.5px; color:var(--t3); text-transform:uppercase; letter-spacing:.06em; margin-left:auto; }
+
+/* barra de envio fixa */
+.submitbar{ position:sticky; bottom:0; background:linear-gradient(to top, var(--bg) 70%, transparent); padding:12px 0 max(12px, env(safe-area-inset-bottom)); }
+.btn{ width:100%; border:none; border-radius:12px; padding:15px; background:var(--carbon); color:var(--citric); font-family:"DM Mono",monospace; font-size:13px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
+.btn:disabled{ opacity:.45; cursor:not-allowed; }
+.btn svg{ width:16px; height:16px; stroke:var(--citric); fill:none; stroke-width:2.4; }
+.prog{ text-align:center; font-family:"DM Mono",monospace; font-size:10.5px; color:var(--t3); margin-bottom:9px; }
+
+.footer{ text-align:center; padding:8px 20px 22px; }
+.footer span{ font-family:"DM Mono",monospace; font-size:10px; color:var(--t3); text-transform:uppercase; letter-spacing:.08em; }
+.hide{ display:none !important; }
 </style>
 </head>
 <body>
@@ -59,24 +91,163 @@ body { font-family:"DM Sans",sans-serif; background:var(--bg); color:var(--t1); 
 <div class="header">
   <div class="header-badge"><span>TS</span></div>
   <div>
-    <div class="header-title">Pesquisa</div>
-    <div class="header-sub">pesquisa.tatasushi.tech</div>
+    <div class="header-title">Pesquisa de Clima</div>
+    <div class="header-sub">TATÁ Sushi</div>
   </div>
 </div>
 
 <div class="main">
-  <div class="card">
-    <div class="mark"><span>TS</span></div>
-    <div class="tag">Em breve</div>
-    <h1>Estamos preparando esta pesquisa</h1>
-    <p>Esta página vai receber uma pesquisa da TATÁ Sushi. Volte em instantes ou aguarde o link do convite.</p>
-    <div class="dots"><i></i><i></i><i></i></div>
+
+  <!-- LOADING -->
+  <div class="state" id="view-loading">
+    <div class="state-card"><div class="spinner"></div><p style="margin-top:18px">Carregando…</p></div>
   </div>
+
+  <!-- ERRO / ENCERRADO -->
+  <div class="state hide" id="view-msg">
+    <div class="state-card">
+      <div class="state-mark"><svg id="msg-icon" viewBox="0 0 24 24"></svg></div>
+      <h1 id="msg-title">—</h1>
+      <p id="msg-text">—</p>
+    </div>
+  </div>
+
+  <!-- FORM -->
+  <div class="hide" id="view-form">
+    <div class="intro">
+      <h1>Como está o clima pra você?</h1>
+      <p>São só algumas perguntas rápidas. Sua opinião ajuda a melhorar o dia a dia no Tatá. Leva menos de 1 minuto.</p>
+      <div class="anon">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        <span>Anônimo. Ninguém vê quem respondeu — o RH enxerga só os resultados do grupo.</span>
+      </div>
+    </div>
+
+    <div id="questions"></div>
+
+    <div class="submitbar">
+      <div class="prog" id="prog">0 de 0 respondidas</div>
+      <button class="btn" id="btn-send" disabled>
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        <span id="btn-label">Enviar respostas</span>
+      </button>
+    </div>
+  </div>
+
 </div>
 
-<div class="footer">
-  <span>TATÁ Sushi</span>
-</div>
+<div class="footer"><span>TATÁ Sushi</span></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+(function(){
+  "use strict";
+  var SUPA_URL  = 'https://aoqsbusfrffapjglpqjk.supabase.co';
+  var SUPA_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFvcXNidXNmcmZmYXBqZ2xwcWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5MzcxMjQsImV4cCI6MjA5ODUxMzEyNH0.Dd9Z3SR3-18mQVX_yqUbIi0PG-eltLNjmOZB1Xu7W9o';
+
+  var ICONS = {
+    sad:   '<circle cx="12" cy="12" r="9"/><path d="M8 15s1.5-2 4-2 4 2 4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>',
+    check: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>',
+    heart: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>'
+  };
+  var SCALE_LABELS = { 1:'Muito baixo', 3:'Moderado', 5:'Excelente' };
+
+  var $ = function(id){ return document.getElementById(id); };
+  function show(view){ ['loading','msg','form'].forEach(function(v){ $('view-'+v).classList.toggle('hide', v!==view); }); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function msg(icon,title,text){ $('msg-icon').innerHTML=ICONS[icon]||ICONS.sad; $('msg-title').textContent=title; $('msg-text').textContent=text; show('msg'); }
+
+  var MOTIVOS = {
+    expirada:      ['clock','Este link expirou','O convite vale por 24 horas. Se ainda quiser participar, avise o RH que a gente reenvia.'],
+    ja_respondida: ['check','Você já respondeu','Obrigado por participar! Sua resposta foi registrada. 💚'],
+    invalido:      ['sad','Link inválido','Confira se copiou o endereço completo da mensagem. Na dúvida, fale com o RH.'],
+    sem_token:     ['sad','Link incompleto','Abra a pesquisa pelo link que você recebeu no WhatsApp.']
+  };
+  function motivoMsg(m){ var d=MOTIVOS[m]||MOTIVOS.invalido; msg(d[0],d[1],d[2]); }
+
+  var sb, token, ITENS=[], ABERTA=null, resp={};
+
+  function getToken(){
+    var p=new URLSearchParams(location.search);
+    return (p.get('t')||p.get('token')||'').trim();
+  }
+
+  function renderQuestions(){
+    var html='';
+    ITENS.forEach(function(it, i){
+      html+='<div class="q" id="q-'+esc(it.id)+'">'+
+        '<div class="q-top"><span class="q-num">'+(i+1)+' / '+ITENS.length+'</span>'+
+          (it.dimensao?'<span class="q-dim">'+esc(it.dimensao)+'</span>':'')+'</div>'+
+        '<div class="q-text">'+esc(it.texto)+'</div>'+
+        '<div class="scale">'+
+          [1,2,3,4,5].map(function(v){ return '<button type="button" data-q="'+esc(it.id)+'" data-v="'+v+'">'+v+'</button>'; }).join('')+
+        '</div>'+
+        '<div class="scale-lbl"><span>'+SCALE_LABELS[1]+'</span><span>'+SCALE_LABELS[3]+'</span><span>'+SCALE_LABELS[5]+'</span></div>'+
+      '</div>';
+    });
+    if(ABERTA){
+      html+='<div class="q">'+
+        '<div class="q-top"><div class="q-text" style="margin:0">'+esc(ABERTA.texto)+'</div><span class="q-opt">Opcional</span></div>'+
+        '<textarea id="aberta" placeholder="Escreva aqui (opcional)…"></textarea>'+
+      '</div>';
+    }
+    $('questions').innerHTML=html;
+    Array.prototype.forEach.call(document.querySelectorAll('.scale button'), function(b){
+      b.addEventListener('click', function(){
+        var q=b.getAttribute('data-q'), v=parseInt(b.getAttribute('data-v'),10);
+        resp[q]=v;
+        Array.prototype.forEach.call(document.querySelectorAll('.scale button[data-q="'+q+'"]'), function(x){
+          x.classList.toggle('sel', parseInt(x.getAttribute('data-v'),10)===v);
+        });
+        updateProg();
+      });
+    });
+    updateProg();
+  }
+
+  function updateProg(){
+    var done=ITENS.filter(function(it){ return resp[it.id]!=null; }).length;
+    $('prog').textContent=done+' de '+ITENS.length+' respondidas';
+    $('btn-send').disabled = done < ITENS.length;
+  }
+
+  function abrir(){
+    sb.schema('tata_plus').rpc('av_clima_abrir',{ p_token: token }).then(function(res){
+      var d=res && res.data;
+      if(res.error){ motivoMsg('invalido'); return; }
+      if(!d || !d.ok){ motivoMsg((d && d.motivo) || 'invalido'); return; }
+      ITENS=(d.itens||[]); ABERTA=d.aberta||null;
+      if(!ITENS.length){ motivoMsg('invalido'); return; }
+      renderQuestions(); show('form');
+    }, function(){ motivoMsg('invalido'); });
+  }
+
+  function enviar(){
+    var btn=$('btn-send'); btn.disabled=true; $('btn-label').textContent='Enviando…';
+    var texto = ($('aberta') ? $('aberta').value : '') || '';
+    sb.schema('tata_plus').rpc('av_clima_responder',{ p_token: token, p_respostas: resp, p_texto: texto }).then(function(res){
+      var d=res && res.data;
+      if(!res.error && d && d.ok){ msg('check','Recebido! Obrigado 💚','Sua resposta anônima foi registrada. Valeu por ajudar a melhorar o Tatá!'); return; }
+      if(d && d.motivo){ motivoMsg(d.motivo); return; }
+      btn.disabled=false; $('btn-label').textContent='Enviar respostas';
+      alert('Não deu pra enviar agora. Tente de novo em instantes.');
+    }, function(){
+      btn.disabled=false; $('btn-label').textContent='Enviar respostas';
+      alert('Sem conexão. Verifique a internet e tente de novo.');
+    });
+  }
+
+  function boot(){
+    token=getToken();
+    if(!token){ motivoMsg('sem_token'); return; }
+    if(!window.supabase || !window.supabase.createClient){ motivoMsg('invalido'); return; }
+    sb=window.supabase.createClient(SUPA_URL, SUPA_ANON);
+    $('btn-send').addEventListener('click', enviar);
+    abrir();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+</script>
 </body>
 </html>
