@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<!--
+  ─────────────────────────────────────────────────────────────
+  MANUTENÇÃO:
+  Esta é a página de espera (holding page) da pesquisa.
+  Quando o HTML da pesquisa estiver pronto, SUBSTITUA este arquivo
+  (index.html) pelo HTML da pesquisa. O disparo aponta para a raiz:
+  https://pesquisa.tatasushi.tech/
+  Basta commit + push na branch main que o GitHub Pages publica.
+  ─────────────────────────────────────────────────────────────
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pesquisa — TATÁ Sushi</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+:root {
+  --carbon:#35383F; --citric:#CFFF00;
+  --bg:#F4F4F4; --white:#FFFFFF; --border:#E2E2E2;
+  --t1:#111111; --t2:#555555; --t3:#999999;
+  --r:6px;
+}
+html { -webkit-font-smoothing:antialiased; }
+body { font-family:"DM Sans",sans-serif; background:var(--bg); color:var(--t1); min-height:100vh; display:flex; flex-direction:column; }
+
+.header { position:sticky; top:0; z-index:200; background:var(--white); border-bottom:1px solid var(--border); padding:0 16px; height:52px; display:flex; align-items:center; gap:10px; }
+.header-badge { width:28px; height:28px; background:var(--carbon); border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.header-badge span { color:var(--citric); font-family:"DM Mono",monospace; font-size:11px; font-weight:600; }
+.header-title { font-size:14px; font-weight:600; }
+.header-sub { font-family:"DM Mono",monospace; font-size:10px; color:var(--t3); text-transform:uppercase; letter-spacing:.08em; }
+
+.main { flex:1; display:flex; align-items:center; justify-content:center; padding:24px 20px 64px; }
+.card { max-width:440px; width:100%; background:var(--white); border:1px solid var(--border); border-radius:var(--r); padding:40px 32px; text-align:center; }
+
+.mark { width:56px; height:56px; margin:0 auto 22px; background:var(--carbon); border-radius:12px; display:flex; align-items:center; justify-content:center; }
+.mark span { color:var(--citric); font-family:"DM Mono",monospace; font-size:20px; font-weight:600; }
+
+.tag { display:inline-block; font-family:"DM Mono",monospace; font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--t3); border:1px solid var(--border); border-radius:999px; padding:4px 10px; margin-bottom:16px; }
+.card h1 { font-size:22px; font-weight:700; margin-bottom:10px; line-height:1.25; }
+.card p { font-size:14px; color:var(--t2); line-height:1.6; }
+
+.dots { display:flex; gap:6px; justify-content:center; margin-top:24px; }
+.dots i { width:7px; height:7px; border-radius:50%; background:var(--border); animation:pulse 1.2s ease-in-out infinite; }
+.dots i:nth-child(2){ animation-delay:.2s; } .dots i:nth-child(3){ animation-delay:.4s; }
+@keyframes pulse { 0%,100%{ background:var(--border); } 50%{ background:var(--carbon); } }
+
+.footer { text-align:center; padding:0 20px 28px; }
+.footer span { font-family:"DM Mono",monospace; font-size:10px; color:var(--t3); text-transform:uppercase; letter-spacing:.08em; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge"><span>TS</span></div>
+  <div>
+    <div class="header-title">Pesquisa</div>
+    <div class="header-sub">pesquisa.tatasushi.tech</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="card">
+    <div class="mark"><span>TS</span></div>
+    <div class="tag">Em breve</div>
+    <h1>Estamos preparando esta pesquisa</h1>
+    <p>Esta página vai receber uma pesquisa da TATÁ Sushi. Volte em instantes ou aguarde o link do convite.</p>
+    <div class="dots"><i></i><i></i><i></i></div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>TATÁ Sushi</span>
+</div>
+
+</body>
+</html>
