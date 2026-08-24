@@ -213,7 +213,7 @@ body{ font-family:"DM Sans",sans-serif; background:var(--bg); color:var(--t1); m
   }
 
   function abrir(){
-    sb.schema('tata_plus').rpc('av_clima_abrir',{ p_token: token }).then(function(res){
+    sb.rpc('av_clima_abrir',{ p_token: token }).then(function(res){
       var d=res && res.data;
       if(res.error){ motivoMsg('invalido'); return; }
       if(!d || !d.ok){ motivoMsg((d && d.motivo) || 'invalido'); return; }
@@ -226,7 +226,7 @@ body{ font-family:"DM Sans",sans-serif; background:var(--bg); color:var(--t1); m
   function enviar(){
     var btn=$('btn-send'); btn.disabled=true; $('btn-label').textContent='Enviando…';
     var texto = ($('aberta') ? $('aberta').value : '') || '';
-    sb.schema('tata_plus').rpc('av_clima_responder',{ p_token: token, p_respostas: resp, p_texto: texto }).then(function(res){
+    sb.rpc('av_clima_responder',{ p_token: token, p_respostas: resp, p_texto: texto }).then(function(res){
       var d=res && res.data;
       if(!res.error && d && d.ok){ msg('check','Recebido! Obrigado 💚','Sua resposta anônima foi registrada. Valeu por ajudar a melhorar o Tatá!'); return; }
       if(d && d.motivo){ motivoMsg(d.motivo); return; }
