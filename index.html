@@ -240,7 +240,7 @@ body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--wh
     var texto = ($('aberta') ? $('aberta').value : '') || '';
     sb.rpc('av_clima_responder',{ p_token: token, p_respostas: resp, p_texto: texto }).then(function(res){
       var d=res && res.data;
-      if(!res.error && d && d.ok){ msg('check','Obrigado! 💚','Sua resposta é anônima e ajuda a melhorarmos ainda mais o TATÁ.'); return; }
+      if(!res.error && d && d.ok){ msg('check','Obrigado!','Sua resposta é anônima e ajuda a melhorarmos ainda mais o TATÁ.'); return; }
       if(d && d.motivo){ motivoMsg(d.motivo); return; }
       btn.disabled=false; $('btn-label').textContent='Enviar respostas';
       alert('Não deu pra enviar agora. Tente de novo em instantes.');
