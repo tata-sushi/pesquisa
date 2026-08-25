@@ -37,7 +37,7 @@
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 :root{
-  --carbon:#35383F; --carbon-2:#3E424B; --citric:#4FB9AB; /* tema Entrevista de Saída (teal) */
+  --carbon:#35383F; --carbon-2:#3E424B; --citric:#CFFF00;
   --bg:#F4F4F4; --white:#FFFFFF; --border:#E2E2E2;
   --t1:#111111; --t2:#555555; --t3:#999999;
   --ok:#1A5C2A; --okbg:#EAF4ED; --bad:#c0392b;
@@ -72,7 +72,7 @@ body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--wh
 .intro-sub{ font-size:14px; font-weight:700; color:var(--t1); margin-bottom:6px; }
 .intro-help{ font-size:13px; color:var(--t2); line-height:1.6; }
 .intro-help b{ color:var(--carbon); font-weight:600; }
-.anon{ display:flex; gap:10px; align-items:flex-start; margin-top:16px; padding:12px 14px; background:rgba(79,185,171,.12); border-left:3px solid var(--citric); border-radius:0 var(--r-sm) var(--r-sm) 0; }
+.anon{ display:flex; gap:10px; align-items:flex-start; margin-top:16px; padding:12px 14px; background:rgba(207,255,0,.10); border-left:3px solid var(--citric); border-radius:0 var(--r-sm) var(--r-sm) 0; }
 .anon svg{ width:16px; height:16px; stroke:var(--carbon); fill:none; stroke-width:2; flex-shrink:0; margin-top:1px; }
 .anon span{ font-size:12.5px; color:var(--t2); line-height:1.55; }
 .anon strong{ color:var(--t1); font-weight:600; }
@@ -167,7 +167,6 @@ body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--wh
     <div id="questions"></div>
 
     <div class="submitbar">
-      <div class="prog" id="prog"></div>
       <button class="btn" id="btn-send" disabled>
         <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
         <span id="btn-label">Enviar respostas</span>
@@ -300,7 +299,6 @@ body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--wh
     var req=ITENS.filter(function(it){ return itemVisible(it) && it.tipo!=='aberta'; });
     var done=req.filter(answered).length;
     $('btn-send').disabled = done < req.length;
-    var p=$('prog'); if(p) p.textContent = req.length ? (done+' de '+req.length+' respondidas') : '';
   }
 
   function abrir(){
