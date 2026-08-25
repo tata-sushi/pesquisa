@@ -207,7 +207,7 @@ body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--wh
   };
   function motivoMsg(m){ var d=MOTIVOS[m]||MOTIVOS.invalido; msg(d[0],d[1],d[2]); }
 
-  var sb, token, ITENS=[], PRIMEIRO='', resp={};
+  var sb, token, ITENS=[], TIPO='', resp={};
 
   function getToken(){
     var p=new URLSearchParams(location.search);
@@ -274,9 +274,9 @@ body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--wh
   // um item aparece conforme o ramo (tipo de saída) e a dependência (ex.: "Outros")
   function itemVisible(it){
     if(it.ramo){
-      var tv=resp['tipo'];
-      if(it.ramo==='demissao'  && tv!=='Pedi demissão')    return false;
-      if(it.ramo==='desligado' && tv!=='Fui desligado(a)') return false;
+      // o tipo (demissão × desligado) vem do RH pelo token, não é perguntado
+      if(it.ramo==='demissao'  && TIPO!=='demissao')  return false;
+      if(it.ramo==='desligado' && TIPO!=='desligado') return false;
     }
     if(it.depende){
       var cur=resp[it.depende.campo], val=it.depende.valor;
@@ -308,9 +308,8 @@ body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--wh
       var d=res && res.data;
       if(res.error){ motivoMsg('invalido'); return; }
       if(!d || !d.ok){ motivoMsg((d && d.motivo) || 'invalido'); return; }
-      ITENS=(d.itens||[]); PRIMEIRO=d.primeiro_nome||'';
+      ITENS=(d.itens||[]); TIPO=d.tipo||'';
       if(!ITENS.length){ motivoMsg('invalido'); return; }
-      var g=$('greet'); if(g && PRIMEIRO){ g.textContent='Olá, '+PRIMEIRO+'! 💚'; }
       renderQuestions(); updateProg(); show('form');
     }, function(){ motivoMsg('invalido'); });
   }
