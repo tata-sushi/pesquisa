@@ -85,8 +85,8 @@ body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--wh
 .scale button{ aspect-ratio:1/1; border:1.5px solid var(--border); background:var(--white); border-radius:10px; font-family:"DM Mono",monospace; font-size:18px; font-weight:500; color:var(--t2); cursor:pointer; transition:transform .08s, background .12s, border-color .12s, color .12s; }
 .scale button:active{ transform:scale(.94); }
 .scale button.sel{ background:var(--carbon); color:var(--citric); border-color:var(--carbon); }
-.scale-lbl{ display:flex; justify-content:space-between; margin-top:9px; }
-.scale-lbl span{ font-family:"DM Mono",monospace; font-size:9.5px; font-weight:700; color:var(--carbon); }
+.scale-legend{ margin-top:9px; font-family:"DM Mono",monospace; font-size:9.5px; font-weight:600; color:var(--carbon); line-height:1.6; text-align:center; }
+.q-complemento{ font-size:12.5px; color:var(--t2); line-height:1.5; margin:-8px 0 16px; }
 
 /* ── aberta ─────────────────────────────────────────── */
 .q textarea{ width:100%; min-height:88px; border:1.5px solid var(--border); border-radius:10px; padding:12px; font-family:"DM Sans",sans-serif; font-size:14px; color:var(--t1); resize:vertical; transition:border-color .2s, box-shadow .2s; }
@@ -147,7 +147,7 @@ body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--wh
       <p>Queremos ouvir sua opinião sobre alguns temas, que podemos melhorar no dia a dia do TATÁ. Bora lá?</p>
       <div class="intro-sep">
         <h2 class="intro-sub">Como responder?</h2>
-        <p class="intro-help">Responda as perguntas escolhendo de <b>1</b> a <b>5</b>, onde <b>1</b> representa uma baixa compatibilidade (<b>Raramente</b>) e <b>5</b> uma alta compatibilidade (<b>Sempre</b>).</p>
+        <p class="intro-help">Responda as perguntas escolhendo de <b>1</b> a <b>5</b>, onde <b>1</b> é <b>Nada</b> e <b>5</b> é <b>Muito</b>. A dica abaixo de cada pergunta ajuda a se situar.</p>
       </div>
       <div class="anon">
         <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
@@ -182,7 +182,6 @@ body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--wh
     check: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>',
     heart: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>'
   };
-  var SCALE_LABELS = { 1:'Raramente', 3:'Às vezes', 5:'Sempre' };
 
   var $ = function(id){ return document.getElementById(id); };
   function show(view){ ['loading','msg','form'].forEach(function(v){ $('view-'+v).classList.toggle('hide', v!==view); }); }
@@ -209,10 +208,11 @@ body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--wh
     ITENS.forEach(function(it, i){
       html+='<div class="q" id="q-'+esc(it.id)+'">'+
         '<div class="q-text">'+esc(it.texto)+'</div>'+
+        (it.complemento?'<div class="q-complemento">'+esc(it.complemento)+'</div>':'')+
         '<div class="scale">'+
           [1,2,3,4,5].map(function(v){ return '<button type="button" data-q="'+esc(it.id)+'" data-v="'+v+'">'+v+'</button>'; }).join('')+
         '</div>'+
-        '<div class="scale-lbl"><span>'+SCALE_LABELS[1]+'</span><span>'+SCALE_LABELS[3]+'</span><span>'+SCALE_LABELS[5]+'</span></div>'+
+        '<div class="scale-legend">1 Nada · 2 Pouco · 3 Moderadamente · 4 Bastante · 5 Muito</div>'+
       '</div>';
     });
     if(ABERTA){
