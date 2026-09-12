@@ -64,7 +64,7 @@ body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--wh
 .spinner{ width:34px; height:34px; border-radius:50%; border:3px solid var(--border); border-top-color:var(--carbon); animation:spin .8s linear infinite; margin:0 auto; }
 @keyframes spin{ to{ transform:rotate(360deg); } }
 
-/* ── intro / anonimato ──────────────────────────────── */
+/* ── intro / confidencialidade ──────────────────────── */
 .intro{ background:var(--white); border:1px solid var(--border); border-radius:var(--r); padding:22px 20px; margin-bottom:14px; color:var(--t1); }
 .intro h1{ font-size:19px; font-weight:700; line-height:1.3; margin-bottom:8px; color:var(--t1); }
 .intro p{ font-size:13.5px; color:var(--t2); line-height:1.6; }
@@ -144,14 +144,14 @@ body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--wh
   <div class="hide" id="view-form">
     <div class="intro">
       <h1>Como estão as coisas no TATÁ?</h1>
-      <p>Queremos ouvir sua opinião sobre alguns temas, que podemos melhorar no dia a dia do TATÁ. Bora lá?</p>
+      <p>Queremos ouvir sua opinião sobre alguns temas para que possamos melhorar o dia a dia do TATÁ. Bora lá?</p>
       <div class="intro-sep">
         <h2 class="intro-sub">Como responder?</h2>
-        <p class="intro-help">Responda as perguntas escolhendo de <b>1</b> a <b>5</b>, onde <b>1</b> é <b>Nada</b> e <b>5</b> é <b>Muito</b>. A dica abaixo de cada pergunta ajuda a se situar.</p>
+        <p class="intro-help">Responda as perguntas escolhendo de <b>1</b> a <b>5</b>, onde <b>1</b> é <b>Nada</b> (sendo uma avaliação muito ruim) e <b>5</b> é <b>Muito</b> (sendo uma avaliação muito boa).</p>
       </div>
       <div class="anon">
         <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-        <span><strong>Anônimo:</strong> O que você responder aqui é sigiloso e ninguém vê. No final, será gerado um resultado único. Sem nome ou identificação.</span>
+        <span><strong>Confidencial:</strong> O que você responder aqui é sigiloso e ninguém vê. No final, será gerado um resultado único. Sem nome ou identificação.</span>
       </div>
     </div>
 
@@ -256,7 +256,7 @@ body{ font-family:"DM Sans",sans-serif; background:var(--carbon); color:var(--wh
     var texto = ($('aberta') ? $('aberta').value : '') || '';
     sb.rpc('av_clima_responder',{ p_token: token, p_respostas: resp, p_texto: texto }).then(function(res){
       var d=res && res.data;
-      if(!res.error && d && d.ok){ msg('check','Obrigado!','Sua resposta é anônima e ajuda a melhorarmos ainda mais o TATÁ.'); return; }
+      if(!res.error && d && d.ok){ msg('check','Obrigado!','Sua resposta é confidencial e ajuda a melhorarmos ainda mais o TATÁ.'); return; }
       if(d && d.motivo){ motivoMsg(d.motivo); return; }
       btn.disabled=false; $('btn-label').textContent='Enviar respostas';
       alert('Não deu pra enviar agora. Tente de novo em instantes.');
