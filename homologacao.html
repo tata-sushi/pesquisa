@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<!--
+  ─────────────────────────────────────────────────────────────
+  Agendamento de Homologação — TATÁ Sushi
+  Página pública, SEM login. A pessoa chega por link único (enviado pelo RH):
+    https://pesquisa.tatasushi.tech/homologacao.html?t=<token>
+  Fluxo (RPCs no schema public do Supabase, papel anon):
+    homologacao_abrir(token)          → nome + horários disponíveis
+    homologacao_agendar(token, slot)  → grava o horário escolhido (uso único)
+  ─────────────────────────────────────────────────────────────
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Agendar Homologação — TATÁ Sushi</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Escolha a melhor data e horário para a sua homologação no Tatá.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TATÁ Sushi">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="Agendar Homologação — TATÁ Sushi">
+<meta property="og:description" content="Escolha a melhor data e horário para a sua homologação. 💚">
+<meta property="og:url" content="https://pesquisa.tatasushi.tech/homologacao.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+:root{
+  --carbon:#35383F; --citric:#CFFF00; --bg:#2A2D34; --white:#FFFFFF;
+  --t1:#15161A; --t2:#555861; --t3:#9AA0AA; --border:#E6E7EA;
+  --r:14px; --r-sm:10px;
+}
+html,body{ background:var(--bg); }
+body{ font-family:'DM Sans',sans-serif; color:var(--t1); min-height:100dvh; display:flex; flex-direction:column; align-items:center; padding:24px 16px 40px; }
+.hide{ display:none !important; }
+.wrap{ width:100%; max-width:440px; }
+.brand{ display:flex; align-items:center; gap:10px; justify-content:center; margin-bottom:18px; }
+.brand img{ width:34px; height:34px; }
+.brand span{ font-family:'DM Mono',monospace; font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--citric); }
+.card{ background:var(--white); border-radius:var(--r); padding:22px 20px 24px; box-shadow:0 18px 50px rgba(0,0,0,.28); }
+.eyebrow{ font-family:'DM Mono',monospace; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--t3); }
+.title{ font-size:22px; font-weight:700; line-height:1.2; margin:6px 0 4px; }
+.sub{ font-size:13.5px; color:var(--t2); line-height:1.55; }
+.day{ margin-top:18px; }
+.day-h{ font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--t2); margin-bottom:8px; }
+.slots{ display:grid; grid-template-columns:repeat(auto-fill,minmax(84px,1fr)); gap:8px; }
+.slot{ font-family:'DM Mono',monospace; font-size:14px; font-weight:500; color:var(--t1); background:#F4F5F7; border:1.5px solid transparent; border-radius:var(--r-sm); padding:11px 6px; cursor:pointer; transition:.15s; }
+.slot:hover{ background:#ECEEF1; }
+.slot.sel{ background:var(--carbon); color:var(--citric); border-color:var(--carbon); }
+.footer-bar{ position:sticky; bottom:0; margin-top:22px; }
+.btn{ width:100%; font-family:'DM Mono',monospace; font-size:13px; font-weight:500; letter-spacing:.04em; text-transform:uppercase; color:var(--carbon); background:var(--citric); border:none; border-radius:100px; padding:15px; cursor:pointer; transition:.15s; }
+.btn:disabled{ opacity:.4; cursor:default; }
+.pick-hint{ text-align:center; font-size:12px; color:var(--t3); margin-top:10px; }
+.center{ text-align:center; padding:26px 8px; }
+.ico{ width:52px; height:52px; border-radius:50%; background:rgba(207,255,0,.14); display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
+.ico svg{ width:26px; height:26px; stroke:var(--carbon); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.center.dark .ico{ background:rgba(255,255,255,.08); } .center.dark .ico svg{ stroke:var(--citric); }
+.center h2{ font-size:19px; font-weight:700; margin-bottom:6px; } .center p{ font-size:13.5px; color:var(--t2); line-height:1.55; }
+.center.dark h2{ color:var(--white); } .center.dark p{ color:var(--t3); }
+.spin{ width:34px; height:34px; border:3px solid rgba(255,255,255,.15); border-top-color:var(--citric); border-radius:50%; animation:sp 1s linear infinite; margin:40px auto; }
+@keyframes sp{ to{ transform:rotate(360deg); } }
+.foot{ text-align:center; margin-top:22px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--t3); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><img src="favicon.svg" alt=""><span>Tatá Sushi</span></div>
+
+  <div id="view-loading"><div class="spin"></div></div>
+
+  <div id="view-msg" class="hide"><div class="card"><div class="center dark"><div class="ico" id="msg-ico"></div><h2 id="msg-title"></h2><p id="msg-text"></p></div></div></div>
+
+  <div id="view-agenda" class="hide">
+    <div class="card">
+      <div class="eyebrow">Homologação</div>
+      <div class="title" id="ag-ola">Escolha um horário</div>
+      <div class="sub" id="ag-sub">Selecione a melhor data e horário para a sua homologação. Leva poucos minutos.</div>
+      <div id="ag-slots"></div>
+    </div>
+    <div class="footer-bar">
+      <button class="btn" id="ag-btn" disabled>Confirmar horário</button>
+      <div class="pick-hint" id="ag-hint">Toque em um horário para continuar</div>
+    </div>
+  </div>
+
+  <div class="foot">© Tatá Sushi</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+(function(){
+  "use strict";
+  var SUPA_URL  = 'https://aoqsbusfrffapjglpqjk.supabase.co';
+  var SUPA_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFvcXNidXNmcmZmYXBqZ2xwcWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5MzcxMjQsImV4cCI6MjA5ODUxMzEyNH0.Dd9Z3SR3-18mQVX_yqUbIi0PG-eltLNjmOZB1Xu7W9o';
+
+  var ICONS = {
+    sad:   '<circle cx="12" cy="12" r="9"/><path d="M8 15s1.5-2 4-2 4 2 4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>',
+    check: '<path d="M20 6L9 17l-5-5"/>',
+    cal:   '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'
+  };
+  var DOW = ['dom','seg','ter','qua','qui','sex','sáb'];
+  var MES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+
+  var $ = function(id){ return document.getElementById(id); };
+  function show(view){ ['loading','msg','agenda'].forEach(function(v){ $('view-'+v).classList.toggle('hide', v!==view); }); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function msg(icon,title,text){ $('msg-ico').innerHTML=ICONS[icon]||ICONS.sad; $('msg-title').textContent=title; $('msg-text').textContent=text||''; show('msg'); }
+
+  var MOTIVOS = {
+    expirada:     ['clock','Este link expirou','O convite vale por alguns dias. Se ainda quiser agendar, avise o RH que a gente reenvia.'],
+    ja_agendada:  ['check','Horário já agendado','Você já escolheu um horário para a sua homologação. Qualquer mudança, fale com o RH. 💚'],
+    invalido:     ['sad','Link inválido',''],
+    sem_token:    ['sad','Link incompleto','Abra o agendamento pelo link que você recebeu do RH.'],
+    sem_slots:    ['cal','Sem horários no momento','Ainda não há horários disponíveis. O RH vai te avisar assim que abrir novas datas.']
+  };
+  function motivoMsg(m){ var d=MOTIVOS[m]||MOTIVOS.invalido; msg(d[0],d[1],d[2]); }
+
+  var sb, token, SLOTS=[], escolhido=null;
+
+  function getToken(){ var p=new URLSearchParams(location.search); return (p.get('t')||p.get('token')||'').trim(); }
+
+  function diaLabel(diaStr){
+    var a=String(diaStr).split('-'); if(a.length<3) return diaStr;
+    var d=new Date(+a[0], +a[1]-1, +a[2]);
+    return DOW[d.getDay()]+', '+a[2]+' '+MES[+a[1]-1];
+  }
+
+  function render(){
+    var grupos={}; var ordem=[];
+    SLOTS.forEach(function(s){ if(!grupos[s.dia]){ grupos[s.dia]=[]; ordem.push(s.dia); } grupos[s.dia].push(s); });
+    var html='';
+    ordem.forEach(function(dia){
+      html+='<div class="day"><div class="day-h">'+esc(diaLabel(dia))+'</div><div class="slots">';
+      grupos[dia].forEach(function(s){
+        html+='<button type="button" class="slot" data-slot="'+esc(s.slot)+'">'+esc(s.hora)+'</button>';
+      });
+      html+='</div></div>';
+    });
+    $('ag-slots').innerHTML=html;
+    Array.prototype.forEach.call(document.querySelectorAll('.slot'), function(b){
+      b.addEventListener('click', function(){
+        escolhido=b.getAttribute('data-slot');
+        Array.prototype.forEach.call(document.querySelectorAll('.slot'), function(x){ x.classList.toggle('sel', x===b); });
+        $('ag-btn').disabled=false; $('ag-hint').textContent='';
+      });
+    });
+  }
+
+  function abrir(){
+    sb.rpc('homologacao_abrir',{ p_token: token }).then(function(res){
+      var d=res && res.data;
+      if(res.error){ motivoMsg('invalido'); return; }
+      if(!d || !d.ok){ motivoMsg((d && d.motivo) || 'invalido'); return; }
+      SLOTS=(d.slots||[]);
+      if(!SLOTS.length){ motivoMsg('sem_slots'); return; }
+      var nome=d.primeiro_nome||'';
+      $('ag-ola').textContent = nome ? ('Olá, '+nome+'!') : 'Escolha um horário';
+      $('ag-sub').textContent = 'Selecione a melhor data e horário para a sua homologação'+(d.unidade?(' na unidade '+d.unidade):'')+'.';
+      render(); show('agenda');
+    }, function(){ motivoMsg('invalido'); });
+  }
+
+  function agendar(){
+    if(!escolhido) return;
+    var btn=$('ag-btn'); btn.disabled=true; btn.textContent='Confirmando…';
+    sb.rpc('homologacao_agendar',{ p_token: token, p_slot: escolhido }).then(function(res){
+      var d=res && res.data;
+      if(!res.error && d && d.ok){
+        var dt=new Date(d.agendado_em||escolhido);
+        var p=function(n){return n<10?'0'+n:n;};
+        var quando = isNaN(dt.getTime()) ? '' : (p(dt.getDate())+'/'+p(dt.getMonth()+1)+' às '+p(dt.getHours())+':'+p(dt.getMinutes()));
+        msg('check','Homologação agendada!', quando ? ('Está confirmado para '+quando+'. Qualquer mudança, fale com o RH. 💚') : 'Está confirmado! Qualquer mudança, fale com o RH. 💚');
+        return;
+      }
+      if(d && d.motivo==='indisponivel'){ btn.disabled=false; btn.textContent='Confirmar horário'; $('ag-hint').textContent='Ops, esse horário acabou de ser preenchido. Escolha outro.'; escolhido=null; abrir(); return; }
+      if(d && d.motivo){ motivoMsg(d.motivo); return; }
+      btn.disabled=false; btn.textContent='Confirmar horário'; $('ag-hint').textContent='Não deu pra confirmar agora. Tente de novo.';
+    }, function(){ btn.disabled=false; btn.textContent='Confirmar horário'; $('ag-hint').textContent='Sem conexão. Verifique a internet e tente de novo.'; });
+  }
+
+  function boot(){
+    token=getToken();
+    if(!token){ motivoMsg('sem_token'); return; }
+    if(!window.supabase || !window.supabase.createClient){ motivoMsg('invalido'); return; }
+    sb=window.supabase.createClient(SUPA_URL, SUPA_ANON);
+    $('ag-btn').addEventListener('click', agendar);
+    abrir();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+</script>
+</body>
+</html>
